@@ -1,0 +1,53 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+import java.sql.DriverManager;
+
+public class DeleteDemo extends JApplet implements ActionListener
+{
+     JTextField jtf1;
+    PreparedStatement pst;
+    Connection con;
+	public void init()
+	{
+            
+            try
+            {
+            Class.forName("oracle.jdbc.OracleDriver");
+            con=DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","system","9945997562");
+            }
+            catch(Exception e)
+            {
+                System.out.println("Exception");
+            }
+            PreparedStatement pst;
+            setLayout(new FlowLayout());
+            JLabel jbl1= new JLabel("USN");
+            add (jbl1);
+            jtf1=new JTextField(20);
+            add(jtf1);
+            
+            JButton jbt  = new JButton("DELETE");
+            add(jbt);
+            jbt.addActionListener(this);
+   
+	}
+    public void actionPerformed(ActionEvent e) 
+    {
+String u=jtf1.getText();
+
+      String q="Delete from student where usn=?";
+        try
+        {
+        pst=con.prepareStatement(q);
+        pst.setString(1,u);  
+        pst.executeUpdate();
+        }
+        catch(Exception ex)
+        {
+            System.out.println("error");
+        }
+    }
+    
+}

@@ -1,0 +1,94 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+import java.sql.DriverManager;
+
+public class UpdateDemo extends JFrame implements ActionListener
+{
+    JTextField jtf1,jtf2,jtf3;
+    PreparedStatement pst;
+    Connection con;
+	UpdateDemo()
+	{
+            setLayout(new FlowLayout());
+            setTitle("Student Frame");
+            setSize(400,400);
+            
+            try
+            {
+            Class.forName("oracle.jdbc.OracleDriver");
+            con=DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","system","9945997562");
+            }
+            catch(Exception e)
+            {
+                System.out.println("Exception");
+            }
+            PreparedStatement pst;
+            setLayout(new FlowLayout());
+            JLabel jbl1= new JLabel("USN");
+            add (jbl1);
+            jtf1=new JTextField(20);
+            add(jtf1);
+            JLabel jbl2=new JLabel("Name");
+            add(jbl2);
+            jtf2=new JTextField(20);
+            add(jtf2);
+            JLabel jbl3=new JLabel("Age");
+            add(jbl3);
+            jtf3=new JTextField(20);
+            add(jtf3);
+            JButton jbt  = new JButton("SEARCH");
+            add(jbt);
+            jbt.addActionListener(this);
+            JButton jbt1  = new JButton("UPDAT");
+            add(jbt1);
+            jbt1.addActionListener(this);
+            setVisible(true);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+    public void actionPerformed(ActionEvent e) 
+    {
+        String u=jtf1.getText();
+        if(e.getActionCommand().equals("SEARCH"))
+        {
+        String q="select * from student where usn= ?";
+        try
+        {
+        pst=con.prepareStatement(q);
+        pst.setString(1,u);
+        ResultSet rs=pst.executeQuery();
+         if(rs.next())
+        {
+            jtf2.setText(rs.getString(2));
+            jtf3.setText(" "+rs.getInt(3));
+        }
+        }
+         catch(Exception e1)
+         {
+                 
+         }
+        }
+         else
+         {
+         String q1="update student set age=? where usn=?";
+         try
+         {
+         pst=con.prepareStatement(q1);
+         
+        //
+        pst.setInt(1,Integer.parseInt(jtf3.getText()));
+        pst.setString(2, u);
+        pst.executeUpdate();
+        }
+        catch(Exception ex)
+        {
+            System.out.println("error");
+        }
+    }
+    }
+    public static void main(String args[])
+    {
+        new UpdateDemo();
+    }
+}

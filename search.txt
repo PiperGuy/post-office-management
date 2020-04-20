@@ -1,0 +1,65 @@
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+import java.sql.DriverManager;
+
+public class SearchDemo extends JApplet implements ActionListener
+{
+    JTextField jtf1,jtf2,jtf3;
+    PreparedStatement pst;
+    Connection con;
+	public void init()
+	{
+            
+            try
+            {
+            Class.forName("oracle.jdbc.OracleDriver");
+            con=DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","system","9945997562");
+            }
+            catch(Exception e)
+            {
+                System.out.println("Exception");
+            }
+            PreparedStatement pst;
+            setLayout(new FlowLayout());
+            JLabel jbl1= new JLabel("USN");
+            add (jbl1);
+            jtf1=new JTextField(20);
+            add(jtf1);
+            JLabel jbl2=new JLabel("Name");
+            add(jbl2);
+            jtf2=new JTextField(20);
+            add(jtf2);
+            JLabel jbl3=new JLabel("Age");
+            add(jbl3);
+            jtf3=new JTextField(20);
+            add(jtf3);
+            JButton jbt  = new JButton("SEARCH");
+            add(jbt);
+            jbt.addActionListener(this);
+   
+	}
+    public void actionPerformed(ActionEvent e) 
+    {
+        String u=jtf1.getText();
+        String q="Select *from student where usn = ?";
+        try
+        {
+        pst=con.prepareStatement(q);
+        pst.setString(1,u);   
+        ResultSet rs = pst.executeQuery();
+        if(rs.next())
+        {
+            jtf2.setText(rs.getString(2));
+            jtf3.setText(" "+rs.getInt(3));
+        }
+        pst.executeUpdate();
+        }
+        catch(Exception ex)
+        {
+            System.out.println("error");
+        }
+    }
+}
